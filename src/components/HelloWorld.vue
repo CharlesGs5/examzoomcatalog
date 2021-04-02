@@ -1,58 +1,70 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
+    <h1>My First Component!</h1>
+    <div>
+      <input type="text" placeholder="User">
+    </div>
+    <div>
+      <input type="password" placeholder="Password">
+    </div>
+    <button>Get Number!</button>
+    <button v-on:click="clickBtn">Click Me!</button>
     <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
+      <li v-for="(todo, index) of todos" :key="todo.id">{{todo.title}}
+        <button v-on:click="getId">Edit</button>
+        <button @click="deleteTodo(index)">Delete</button>
+      </li>
     </ul>
   </div>
 </template>
 
 <script>
+
+import axios from 'axios';
+
 export default {
   name: 'HelloWorld',
   props: {
-    msg: String
+    userItem: {
+      type: Number,
+      default: 1
+    },
+    userID: {
+      type: Number,
+      default: 1
+    }
+  },
+  data() {
+    return {
+      todos: []
+    };
+  },
+  methods: {
+    getId() {
+      // console.log(this.todos.map((item, index) => {
+      //   console.log(`This in the index: ${index} & this is item.id: ${item.id}`);
+      // }));
+    },
+    deleteTodo(index) {
+      this.todos.splice(index, 1);
+      localStorage.setItem('user', JSON.stringify(this.todos));
+    },
+    async clickBtn() {
+      console.log(`Button Clicked! ${this.userItem}`);
+      try {
+        const res = await axios.get(`https://jsonplaceholder.typicode.com/todos?userId=${this.userItem}`);
+        window.localStorage.setItem("user", JSON.stringify(res.data));
+        console.log(JSON.parse(window.localStorage.getItem("user")));
+        this.todos = res.data;
+      } catch (e) {
+        console.log(`There was an error: ${e}`);
+      }
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+
 </style>
