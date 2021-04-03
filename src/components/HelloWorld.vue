@@ -2,19 +2,32 @@
   <div class="hello">
     <h1>My First Component!</h1>
     <div>
-      <input type="text" placeholder="User">
+      <input type="text" placeholder="Todo" id="todo">
     </div>
     <div>
-      <input type="password" placeholder="Password">
+      <select id="completed">
+        <option>true</option>
+        <option>false</option>
+      </select>
     </div>
-    <button>Get Number!</button>
+    <button @click="addTodo">Add new Todo!</button>
     <button v-on:click="clickBtn">Click Me!</button>
     <ul>
       <li v-for="(todo, index) of todos" :key="todo.id">{{todo.title}}
-        <button v-on:click="getId">Edit</button>
+        <button v-on:click="editTodo(index)">Edit</button>
         <button @click="deleteTodo(index)">Delete</button>
       </li>
     </ul>
+
+    <div v-if="showModal" class="w3-modal">
+      <div class="w3-modal-content">
+        <div class="w3-container">
+          <input type="text" v-model="dataModal">
+          <button @click="saveData">Close!</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -27,30 +40,49 @@ export default {
   props: {
     userItem: {
       type: Number,
-      default: 1
+      default: 1,
+      dataModal: ''
     },
-    userID: {
-      type: Number,
-      default: 1
-    }
   },
   data() {
     return {
-      todos: []
+      todos: [],
+      userID: null,
+      showModal: false,
+      row: null,
+      newTodo: '',
+      newCompleted: null
     };
   },
   methods: {
-    getId() {
-      // console.log(this.todos.map((item, index) => {
-      //   console.log(`This in the index: ${index} & this is item.id: ${item.id}`);
-      // }));
+    editTodo(row) {
+      this.showModal = true;
+      this.dataModal = this.todos[row].title;
+      localStorage.setItem('user', JSON.stringify(this.row = row));
     },
     deleteTodo(index) {
       this.todos.splice(index, 1);
       localStorage.setItem('user', JSON.stringify(this.todos));
     },
+    addTodo() {
+      this.userID = this.todos.length;
+      this.userID++;
+      this.newTodo = document.getElementById('todo').value;
+      this.newCompleted = document.getElementById('completed').value;
+      const newTodo = {
+        userId: 1,
+        id: this.userID,
+        title: this.newTodo,
+        completed: this.newCompleted
+      }
+      this.todos.push(newTodo);
+      localStorage.setItem('user', JSON.stringify(this.todos));
+    },
+    saveData() {
+      this.todos[this.row].title = this.dataModal;
+      this.showModal = false;
+    },
     async clickBtn() {
-      console.log(`Button Clicked! ${this.userItem}`);
       try {
         const res = await axios.get(`https://jsonplaceholder.typicode.com/todos?userId=${this.userItem}`);
         window.localStorage.setItem("user", JSON.stringify(res.data));
@@ -66,5 +98,24 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.w3-modal {
+  z-index: 3;
+  padding-top: 100px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+.w3-modal-content {
+  margin: auto;
+  background-color: #fff;
+  position: relative;
+  padding: 0;
+  outline: 0;
+  width: 600px;
+}
 </style>
