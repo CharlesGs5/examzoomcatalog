@@ -2,7 +2,7 @@
   <div class="hello">
     <h1>My First Component!</h1>
     <div>
-      <input type="text" placeholder="Todo" id="todo">
+      <input type="text" placeholder="Todo" id="todo" required>
     </div>
     <div>
       <select id="completed">
@@ -22,12 +22,13 @@
     <div v-if="showModal" class="w3-modal">
       <div class="w3-modal-content">
         <div class="w3-container">
-          <input type="text" v-model="dataModal">
-          <button @click="saveData">Close!</button>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" v-model="dataModal">
+          </div>
+          <button @click="saveData">Save Data!</button>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -117,5 +118,8 @@ export default {
   padding: 0;
   outline: 0;
   width: 600px;
+  height: 400px;
+  border-radius: 25px;
+  box-shadow: 5px 10px 8px #888888;
 }
 </style>
